@@ -1,7 +1,9 @@
 ﻿using Azure.Data.Tables;
 using HexMaster.RedisCache.Abstractions;
 using Microsoft.Extensions.Options;
+using System.Threading;
 using Wam.Core.Configuration;
+using Wam.Core.ExtensionMethods;
 using Wam.Core.Identity;
 using Wam.Users.DomainModels;
 using Wam.Users.Entities;
@@ -11,6 +13,7 @@ namespace Wam.Users.Repositories;
 public class UsersRepository : IUsersRepository
 {
     private readonly ICacheClientFactory _cacheClientFactory;
+    private readonly ICacheClient _createClient;
 
     private const string TableName = "users";
     private const string PartitionKey = "users";
@@ -31,18 +34,29 @@ public class UsersRepository : IUsersRepository
             entity, 
             TableUpdateMode.Replace,
             cancellationToken);
-        return response.Status == 204;
+        if (response.Status.IsHttpSuccessCode())
+        {
+            await UpdateCache(entity);
+            return true;
+        }
+
+        return false;
     }
 
     public async Task<User> Get(Guid userId, CancellationToken cancellationToken)
     {
-        var cacheClient = _cacheClientFactory.CreateClient();
         var cacheKey = $"user:{userId}";
-        var entity =  await cacheClient.GetOrInitializeAsync(() => GetFromTableStorage(userId, cancellationToken), cacheKey);
+        var entity =  await _createClient.GetOrInitializeAsync(() => GetFromTableStorage(userId, cancellationToken), cacheKey);
         return new User(userId,
             entity.DisplayName,
             entity.EmailAddress,
-            entity.ExclusionReason);
+            (byte?)entity.ExclusionReason);
+    }
+
+    private  Task UpdateCache(UserEntity entity)
+    {
+        var cacheKey = $"user:{entity.RowKey}";
+        return _createClient.SetAsAsync(cacheKey, entity);
     }
 
     private async Task<UserEntity> GetFromTableStorage(Guid userId, CancellationToken cancellationToken)
@@ -63,6 +77,7 @@ public class UsersRepository : IUsersRepository
         ICacheClientFactory cacheClientFactory)
     {
         _cacheClientFactory = cacheClientFactory;
+        _createClient = _cacheClientFactory.CreateClient();
         var tableStorageUrl = $"https://{configuration.Value.StorageAccountName}.table.core.windows.net";
         _tableClient = new TableClient(new Uri(tableStorageUrl), TableName,CloudIdentity.GetCloudIdentity());
     }

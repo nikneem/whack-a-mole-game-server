@@ -9,7 +9,7 @@ public class UserEntity : ITableEntity
     public string RowKey { get; set; }
     public string DisplayName { get; set; }
     public string EmailAddress { get; set; }
-    public byte? ExclusionReason { get; set; }
+    public int? ExclusionReason { get; set; }
     public DateTimeOffset? Timestamp { get; set; }
     public ETag ETag { get; set; }
 }

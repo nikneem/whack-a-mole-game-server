@@ -1,4 +1,5 @@
-﻿using Wam.Users.DataTransferObjects;
+﻿using System.Globalization;
+using Wam.Users.DataTransferObjects;
 using Wam.Users.DomainModels;
 using Wam.Users.Enums;
 
@@ -18,7 +19,7 @@ public static class UserMappings
             user.DisplayName,
             user.EmailAddress,
             user.IsExcluded,
-            exclusionReason?.TranslationKey);
+            exclusionReason?.TranslationKey.ToLower(CultureInfo.InvariantCulture));
        
     }
 

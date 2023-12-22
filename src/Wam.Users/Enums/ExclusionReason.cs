@@ -21,6 +21,11 @@ public abstract class ExclusionReason
     public abstract string Reason { get; }
     public abstract string TranslationKey { get; }
 
+    public static ExclusionReason FromId(byte id)
+    {
+        return All.FirstOrDefault(x => x.ReasonId == id) ?? GeneralSystemMisuse;
+    }
+
 }
 
 public sealed class CodeOfConductViolationExclusionReason : ExclusionReason
