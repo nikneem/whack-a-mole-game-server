@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <UserSecretsId>1950650a-e9b8-4ad9-927b-8d4196128bac</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HexMaster.RedisCache" Version="0.1.6" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Wam.Core\Wam.Core.csproj" />
+    <ProjectReference Include="..\Wam.Users\Wam.Users.csproj" />
+  </ItemGroup>
+
+</Project>

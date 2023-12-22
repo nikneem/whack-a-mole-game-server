@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="DomainModels\" />
+    <Folder Include="Enums\" />
+    <Folder Include="Mappings\" />
+    <Folder Include="Entities\" />
+    <Folder Include="Repositories\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Data.Tables" Version="12.8.2" />
+    <PackageReference Include="HexMaster.DomainDrivenDesign" Version="2.0.5" />
+    <PackageReference Include="HexMaster.RedisCache" Version="0.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Wam.Core\Wam.Core.csproj" />
+  </ItemGroup>
+
+</Project>
