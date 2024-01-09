@@ -1,13 +1,15 @@
 ﻿using HexMaster.DomainDrivenDesign;
 using HexMaster.DomainDrivenDesign.ChangeTracking;
+using Wam.Core.Enums;
+using Wam.Core.ExtensionMethods;
 
 namespace Wam.Games.DomainModels;
 
 public class Game : DomainModel<Guid>
 {
-
-    private List<Player> _players;
-
+    private readonly List<Player> _players;
+    public string Code { get; }
+    public GameState State { get; private set; }
     public DateTimeOffset CreatedOn { get; private set; }
     public DateTimeOffset? StartedOn { get; private set; }
     public DateTimeOffset? FinishedOn { get; private set; }
@@ -23,7 +25,6 @@ public class Game : DomainModel<Guid>
         _players.Add(player);
         SetState(TrackingState.Modified);
     }
-
     public void RemovePlayer(Player player)
     {
         if (_players.Contains(player))
@@ -34,13 +35,40 @@ public class Game : DomainModel<Guid>
         _players.Remove(player);
         SetState(TrackingState.Modified);
     }
+    public void ChangeState(GameState value)
+    {
+        if (State.CanChangeTo(value))
+        {
+            State = value;
+            SetState(TrackingState.Modified);
+        }
+        else
+        {
+            throw new InvalidOperationException($"Cannot change state from {State.Code} to {value.Code}");
+        }
+    }
 
     public Game(Guid id,
+        string code,
+        string state,
         DateTimeOffset createdOn,
         DateTimeOffset? startedOn = null,
         DateTimeOffset? finishedOn = null,
-        List<Player> players = null) : base(id)
+        List<Player>? players = null) : base(id)
     {
-        _players = new List<Player>();
+        Code = code;
+        State = GameState.FromCode(state);
+        CreatedOn = createdOn;
+        StartedOn = startedOn;
+        FinishedOn = finishedOn;
+        _players = players ?? [];
+    }
+
+    public Game() : base(Guid.NewGuid(), TrackingState.New)
+    {
+        Code = StringExtensions.GenerateGameCode();
+        CreatedOn = DateTimeOffset.UtcNow;
+        State = GameState.New;
+        _players = [];
     }
 }

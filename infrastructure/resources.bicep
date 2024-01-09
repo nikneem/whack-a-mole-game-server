@@ -24,6 +24,17 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
   }
 }
 
+resource webPubSub 'Microsoft.SignalRService/webPubSub@2023-08-01-preview' = {
+  name: '${defaultResourceName}-wps'
+  location: location
+  sku: {
+    name: 'Free_F1'
+    tier: 'Free'
+  }
+  kind: 'WebPubSub'
+  properties: {}
+}
+
 resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: '${defaultResourceName}-ai'
   location: location

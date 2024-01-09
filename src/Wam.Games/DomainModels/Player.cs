@@ -10,7 +10,10 @@ public class Player : DomainModel<Guid>
     public string EmailAddress { get; private set; }
     public bool IsBanned { get; private set; }
 
-    public Player(Guid id, TrackingState state = null) : base(id, state)
+    public Player(Guid id, string diplayName, string emailAddress, bool isBanned ) : base(id)
     {
+        DisplayName = diplayName;
+        EmailAddress = emailAddress;
+        IsBanned = isBanned;
     }
 }

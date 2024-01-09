@@ -1,7 +1,6 @@
 ﻿using Azure.Data.Tables;
 using HexMaster.RedisCache.Abstractions;
 using Microsoft.Extensions.Options;
-using System.Threading;
 using Wam.Core.Configuration;
 using Wam.Core.ExtensionMethods;
 using Wam.Core.Identity;
@@ -12,12 +11,11 @@ namespace Wam.Users.Repositories;
 
 public class UsersRepository : IUsersRepository
 {
-    private readonly ICacheClientFactory _cacheClientFactory;
     private readonly ICacheClient _createClient;
 
     private const string TableName = "users";
     private const string PartitionKey = "users";
-    private TableClient _tableClient;
+    private readonly TableClient _tableClient;
 
     public async Task<bool> Save(User user, CancellationToken cancellationToken)
     {
@@ -76,8 +74,7 @@ public class UsersRepository : IUsersRepository
         IOptions<AzureServices> configuration, 
         ICacheClientFactory cacheClientFactory)
     {
-        _cacheClientFactory = cacheClientFactory;
-        _createClient = _cacheClientFactory.CreateClient();
+        _createClient = cacheClientFactory.CreateClient();
         var tableStorageUrl = $"https://{configuration.Value.StorageAccountName}.table.core.windows.net";
         _tableClient = new TableClient(new Uri(tableStorageUrl), TableName,CloudIdentity.GetCloudIdentity());
     }
